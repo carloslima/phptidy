@@ -1644,7 +1644,9 @@ function indent_text(&$tokens, $key, $curly_braces_count, $round_braces_count, $
 			".",
 			array(T_CONCAT_EQUAL, ".="),
 			// type
-			array(T_INSTANCEOF, "instanceof")
+			array(T_INSTANCEOF, "instanceof"),
+                        // method calls
+			array(T_OBJECT_OPERATOR, "->"),
 		);
 
 		if (
