@@ -1103,6 +1103,7 @@ function fix_separation_whitespace(&$tokens) {
 			case T_FOREACH:
 			case T_WHILE:
 			case T_SWITCH:
+			case T_CATCH:
 				// At least 1 space between a statement and a opening round bracket
 				if ( $tokens[$key+1] === "(" ) {
 					// Insert an additional space or newline before the bracket
