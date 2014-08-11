@@ -757,10 +757,15 @@ function fix_token_case(&$tokens) {
 		T_WHILE
 	);
 
-	foreach ( $tokens as &$token ) {
+	foreach ( $tokens as $key => &$token ) {
 		if (is_string($token)) continue;
 		if ($token[1] === strtolower($token[1])) continue;
 		if (in_array($token[0], $lower_case_tokens)) {
+		if (
+			$token[0] === T_ARRAY and
+			$tokens[$key+1][0] === T_WHITESPACE and
+			$tokens[$key+2][0] === T_VARIABLE
+		) continue; // don't lowercase Array type hinting
 			$token[1] = strtolower($token[1]);
 		}
 	}
