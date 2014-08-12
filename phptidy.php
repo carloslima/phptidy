@@ -1039,6 +1039,7 @@ function fix_statement_brackets(&$tokens) {
 function fix_separation_whitespace(&$tokens) {
 
 	$control_structure = false;
+	$anonymous = false;
 
 	foreach ( $tokens as $key => &$token ) {
 		if (is_string($token)) {
@@ -1050,14 +1051,14 @@ function fix_separation_whitespace(&$tokens) {
 				) {
 					// Insert an additional space or newline before the bracket
 					array_splice($tokens, $key+1, 0, array(
-							array(T_WHITESPACE, separation_whitespace($control_structure))
+							array(T_WHITESPACE, separation_whitespace($anonymous ? T_SWITCH : $control_structure))
 						));
 				} elseif (
 					isset($tokens[$key+1][0]) and $tokens[$key+1][0] === T_WHITESPACE and
 					isset($tokens[$key+2]) and $tokens[$key+2] === "{"
 				) {
 					// Set the existing whitespace before the bracket to exactly one space or newline
-					$tokens[$key+1][1] = separation_whitespace($control_structure);
+					$tokens[$key+1][1] = separation_whitespace($anonymous ? T_SWITCH : $control_structure);
 				}
 			}
 
@@ -1089,6 +1090,7 @@ function fix_separation_whitespace(&$tokens) {
 				break;
 			case T_FUNCTION:
 				// Function definition
+				$anonymous = false;
 				if (
 					isset($tokens[$key+1][0]) and $tokens[$key+1][0] === T_WHITESPACE and
 					isset($tokens[$key+2][0]) and $tokens[$key+2][0] === T_STRING
@@ -1100,6 +1102,12 @@ function fix_separation_whitespace(&$tokens) {
 						// Remove the whitespace
 						array_splice($tokens, $key+3, 1);
 					}
+				} elseif (
+					isset($tokens[$key+1]) and $tokens[$key+1] === "(" or
+					isset($tokens[$key+1][0]) and $tokens[$key+1][0] === T_WHITESPACE and
+					isset($tokens[$key+2]) and $tokens[$key+2] === "("
+				) {
+					$anonymous = true;
 				}
 				break;
 			case T_IF:
